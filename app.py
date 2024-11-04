@@ -8,18 +8,19 @@ from patterns import count_patterns, list_patterns, pdf_request_patterns, greeti
 from google.cloud import storage
 from tempfile import NamedTemporaryFile
 import json
+import logging
 
 # Base GCS path and local download path
 BASE_GCS_PATH = "gs://fynd-assets-private/documents/daytrader/"
 LOCAL_DOWNLOAD_PATH = "/Users/ninadmandavkar/Desktop/daytrader/08-2024/"
 
+
 def fetch_pdf_from_gcs(pdf_name):
-    gcs_search_path = f"{BASE_GCS_PATH}**/*{pdf_name}*.pdf"
-    result = subprocess.run(
-        ["gsutil", "-m", "cp", "-r", gcs_search_path, LOCAL_DOWNLOAD_PATH],
-        capture_output=True,
-        text=True
-    )
+    command = ["gsutil", "cp", f"gs://your_bucket/{pdf_name}", "/local/path/"]
+    logging.info(f"Running command: {' '.join(command)}")
+    result = subprocess.run(command, capture_output=True)
+    if result.returncode != 0:
+        logging.error(f"Error: {result.stderr.decode()}")
     return result
 
 def count_invoices_in_month(month_year):
